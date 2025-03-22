@@ -1,0 +1,31 @@
+# Ambientes Virtuais PipEnv
+Pipfile.lock
+
+# Arquivos do sistema (Windows/macOS/Linux)
+.DS_Store
+Thumbs.db
+
+# Configurações do VSCode
+.vscode/
+
+# Arquivos compilados do Python
+__pycache__/
+*.py[cod]
+
+# Logs e arquivos temporários
+*.log
+logs/
+debug.log
+*.temp
+
+# Arquivos de banco de dados locais
+*.sqlite3
+db.sqlite3
+
+# Arquivos gerados automaticamente
+*.bak
+*.swp
+*.swo
+
+# Dependências do Node.js (caso use Dash ou frontend adicional)
+node_modules/
