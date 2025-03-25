@@ -29,3 +29,7 @@ db.sqlite3
 
 # Dependências do Node.js (caso use Dash ou frontend adicional)
 node_modules/
+
+# Aquivos de dados para análise
+quadrantes_produtividade/data/
+quadrantes_produtividade/checkpoints/
