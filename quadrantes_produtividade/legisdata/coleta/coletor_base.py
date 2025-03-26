@@ -3,17 +3,10 @@
 import os
 import pandas as pd
 from datetime import datetime
-
-DIRETORIO_CHECKPOINT = os.path.join("checkpoints")
-ARQUIVO_CHECKPOINT = os.path.join(DIRETORIO_CHECKPOINT, "arquivos_baixados.csv")
+from legisdata.config import ARQUIVO_CHECKPOINT, DIRETORIO_CHECKPOINT
 
 
 class ColetorBase:
-    """
-    Classe base para todos os coletores de dados da Câmara.
-    Gerencia checkpoint por tipo + ano.
-    """
-
     def __init__(self, tipo: str):
         self.tipo = tipo
         os.makedirs(DIRETORIO_CHECKPOINT, exist_ok=True)

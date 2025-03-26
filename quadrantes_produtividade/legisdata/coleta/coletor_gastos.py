@@ -2,19 +2,14 @@
 
 import os
 import wget
-import zipfile
 import tempfile
 import shutil
+from legisdata.config import DIRETORIO_RAW
+from legisdata.utils.io import extrair_csv_de_zip
 from .coletor_base import ColetorBase
-
-DIRETORIO_RAW = os.path.join("data", "raw")
 
 
 class ColetorGastosCEAP(ColetorBase):
-    """
-    Baixa e extrai arquivos de gastos parlamentares (CEAP).
-    """
-
     def __init__(self):
         super().__init__(tipo="gastos")
 
@@ -31,11 +26,7 @@ class ColetorGastosCEAP(ColetorBase):
             zip_path = os.path.join(temp_dir, f"{ano}.zip")
             wget.download(url, out=zip_path)
 
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(temp_dir)
-
-            arquivo_csv = next(f for f in os.listdir(temp_dir) if f.endswith(".csv"))
-            caminho_csv = os.path.join(temp_dir, arquivo_csv)
+            caminho_csv = extrair_csv_de_zip(zip_path, temp_dir)
 
             destino = os.path.join(DIRETORIO_RAW, self.tipo)
             os.makedirs(destino, exist_ok=True)
@@ -46,5 +37,6 @@ class ColetorGastosCEAP(ColetorBase):
 
         except Exception as e:
             print(f"\n❌ Erro ao baixar gastos {ano}: {e}")
+
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
