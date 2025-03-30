@@ -1,0 +1,29 @@
+siglaTipo;descricaoTipo;peso
+PL;Projeto de Lei;1.0
+PLP;Projeto de Lei Complementar;1.0
+PEC;Proposta de Emenda à Constituição;1.0
+PLV;Projeto de Lei de Conversão;1.0
+PDC;Projeto de Decreto Legislativo;0.9
+PDV;Projeto de Decreto Legislativo de Vetos;0.85
+MPV;Medida Provisória;0.95
+PRC;Projeto de Resolução da Câmara;0.8
+RIC;Requerimento de Informação;0.6
+REQ;Requerimento;0.4
+EMC;Emenda à Proposição;0.3
+MSC;Mensagem;0.7
+PDL;Projeto de Decreto Legislativo;0.9
+PLR;Projeto de Lei de Reforma;1.0
+PLS;Projeto de Lei do Senado;0.95
+PRL;Projeto de Resolução Legislativa;0.8
+PEN;Proposição enviada pelo Senado;0.8
+OFC;Ofício;0.3
+DLG;Decreto Legislativo;0.9
+DEP;Despacho;0.2
+REL;Relatório;0.2
+IND;Indicação;0.4
+RSP;Requerimento do Senado;0.4
+SBT;Substitutivo;0.3
+TVR;Termo de Votação/Relatório;0.3
+AVN;Avulso de Proposição;0.1
+CTR;Contrarrazões;0.1
+PFO;Proposição fora da numeração convencional;0.1
