@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 class IndicadoresParlamentares:
@@ -44,27 +45,36 @@ class IndicadoresParlamentares:
         return df.merge(resumo, on="id_deputado", how="left")
 
     def _adicionar_gastos(self, df: pd.DataFrame):
-        self.gastos["valor"] = pd.to_numeric(self.gastos["vlrLiquido"], errors="coerce")
+        gastos = self.gastos.copy()
+        gastos["valor"] = pd.to_numeric(gastos["vlrLiquido"], errors="coerce")
+        gastos["id_deputado"] = gastos["ideCadastro"].astype(str)
 
-        gastos_agg = self.gastos.groupby("ideCadastro").agg(
+        cond_passagens = (
+            gastos["txtDescricao"].str.contains("passagem aérea", case=False, na=False) &
+            gastos["txtTrecho"].str.contains("BSB", case=False, na=False)
+        )
+        gastos["valor_passagens_bsb"] = gastos["valor"].where(cond_passagens, 0)
+
+        gastos_agg = gastos.groupby("id_deputado").agg(
             total_gastos=("valor", "sum"),
+            gastos_passagens_bsb=("valor_passagens_bsb", "sum"),
             siglaPartido=("sgPartido", "last"),
             siglaUf=("sgUF", "last"),
             nomeCivil=("txNomeParlamentar", "last")
-        ).reset_index().rename(columns={"ideCadastro": "id_deputado"})
+        ).reset_index()
+
+        gastos_agg["total_gastos"] = gastos_agg["total_gastos"] - gastos_agg["gastos_passagens_bsb"]
 
         df["id_deputado"] = df["id_deputado"].astype(str)
-        gastos_agg["id_deputado"] = gastos_agg["id_deputado"].astype(str)
-
-        return df.merge(gastos_agg, on="id_deputado", how="left")
+        return df.merge(gastos_agg.drop(columns=["gastos_passagens_bsb"]), on="id_deputado", how="left")
 
     def _calcular_produtividade(self, df: pd.DataFrame):
-        df["total_proposicoes"] = df["total_proposicoes"].fillna(-1).astype(int)
-        df.dropna(subset=["total_proposicoes"], inplace=True)
-        #df["indice_produtividade"] = df["indice_produtividade"].fillna(-1).astype(float)
-        df["total_gastos"] = df["total_gastos"].fillna(-1)
+        df.dropna(inplace=True)
+        
+        df["ranking_gastos"] = df["total_gastos"].rank(method="dense", ascending=True)
+        df["ranking_produtividade"] = df["indice_produtividade"].rank(method="dense", ascending=False)
 
-        df["eficiencia"] = df["indice_produtividade"] / df["total_gastos"]
-        df["eficiencia"] = df["eficiencia"].replace([float("inf"), -float("inf")], None)
-
+        df["pontuacao_final"] = df["ranking_gastos"] + df["ranking_produtividade"]
+        df["ranking_final"] = df["pontuacao_final"].rank(method="dense")
+        
         return df

@@ -20,5 +20,5 @@ dados_tratados = transformador.transformar()
 
 # Indicadores
 calc = IndicadoresParlamentares(dados_tratados, caminho_pesos="mapa_pesos_proposicoes.csv")
-df_resultado = calc.calcular_indicadores()
-df_resultado.dropna(inplace=True)
+df = calc.calcular_indicadores()
+
