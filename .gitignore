@@ -33,3 +33,6 @@ node_modules/
 # Aquivos de dados para análise
 quadrantes_produtividade/data/
 quadrantes_produtividade/checkpoints/
+
+# Variáveis de ambiente
+*.env

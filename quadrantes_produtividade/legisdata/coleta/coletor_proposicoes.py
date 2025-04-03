@@ -23,7 +23,8 @@ class ColetorProposicoes(ColetorBase):
             return
 
         try:
-            self._baixar_csv(ano)
+            self._baixar_via_api(ano)
+            #self._baixar_csv(ano)
             self._atualizar_checkpoint(ano)
         except Exception as e:
             print(f"⚠️ Erro no download do CSV de {ano}: {e}")

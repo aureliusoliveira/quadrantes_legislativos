@@ -1,80 +1,161 @@
-
+import os
 import pandas as pd
+
 
 class IndicadoresParlamentares:
     def __init__(self, dados: dict, caminho_pesos: str = None):
         self.deputados = dados["deputados"]
-        self.gastos = dados["gastos"]
         self.proposicoes = dados["proposicoes"]
         self.autores = dados["autores"]
-        self.caminho_pesos = caminho_pesos
+        self.gastos = dados["gastos"]
+        self.tramitacoes = dados["tramitacoes"]
+        self.temas = dados["temas"]
 
-    def calcular_indicadores(self):
-        df = self._base_deputados()
-        df = self._adicionar_proposicoes(df)
-        df = self._adicionar_gastos(df)
-        df = self._calcular_produtividade(df)
-        return df
+        self.caminho_pesos = caminho_pesos or os.path.join("legisdata", "static", "mapa_pesos_proposicoes.csv")
 
-    def _base_deputados(self):
-        return self.deputados[["id_deputado"]].drop_duplicates().copy()
+        self._adicionar_autores()
+        self._mapear_pesos()
+        self._calcular_indicadores()
+        self._adicionar_tramitacoes()
+        self._adicionar_temas()
+        self._juntar_resultados()
 
-    def _carregar_pesos(self):
-        if self.caminho_pesos:
-            pesos_df = pd.read_csv(self.caminho_pesos, sep=";")
-            return dict(zip(pesos_df["siglaTipo"], pesos_df["peso"]))
-        else:
-            return {}
-
-    def _adicionar_proposicoes(self, df: pd.DataFrame):
-        autores = self.autores.copy()
-        proposicoes = self.proposicoes[["id", "siglaTipo"]].copy()
-        autores = autores.merge(proposicoes, left_on="idProposicao", right_on="id", how="left")
-
-        pesos = self._carregar_pesos()
-        autores["peso"] = autores["siglaTipo"].map(pesos).fillna(0)
-
-        resumo = autores.groupby("idDeputadoAutor").agg(
-            total_proposicoes=("idProposicao", "count"),
-            indice_produtividade=("peso", "sum")
-        ).reset_index().rename(columns={"idDeputadoAutor": "id_deputado"})
-
-        df["id_deputado"] = df["id_deputado"].astype(str)
-        resumo["id_deputado"] = resumo["id_deputado"].astype(str)
-
-        return df.merge(resumo, on="id_deputado", how="left")
-
-    def _adicionar_gastos(self, df: pd.DataFrame):
-        gastos = self.gastos.copy()
-        gastos["valor"] = pd.to_numeric(gastos["vlrLiquido"], errors="coerce")
-        gastos["id_deputado"] = gastos["ideCadastro"].astype(str)
-
-        cond_passagens = (
-            gastos["txtDescricao"].str.contains("passagem aérea", case=False, na=False) &
-            gastos["txtTrecho"].str.contains("BSB", case=False, na=False)
+    def _adicionar_autores(self):
+        self.proposicoes = self.proposicoes.merge(
+            self.autores,
+            left_on="id", right_on="idProposicao", how="left"
         )
-        gastos["valor_passagens_bsb"] = gastos["valor"].where(cond_passagens, 0)
 
-        gastos_agg = gastos.groupby("id_deputado").agg(
-            total_gastos=("valor", "sum"),
-            gastos_passagens_bsb=("valor_passagens_bsb", "sum"),
-            siglaPartido=("sgPartido", "last"),
-            siglaUf=("sgUF", "last"),
-            nomeCivil=("txNomeParlamentar", "last")
-        ).reset_index()
+    def _mapear_pesos(self):
+        try:
+            mapa = pd.read_csv(self.caminho_pesos, sep=';')
+            mapa_dict = dict(zip(mapa["siglaTipo"], mapa["peso"]))
+            self.proposicoes["peso"] = self.proposicoes["siglaTipo"].map(mapa_dict).fillna(0)
+        except Exception as e:
+            raise ValueError(f"Erro ao carregar o mapa de pesos: {e}")
 
-        gastos_agg["total_gastos"] = gastos_agg["total_gastos"] - gastos_agg["gastos_passagens_bsb"]
+    def _calcular_indicadores(self):
+        self.ind_produtividade = (
+            self.proposicoes
+            .groupby("idDeputado")["peso"]
+            .sum()
+            .reset_index()
+            .rename(columns={"peso": "produtividade_legislativa"})
+        )
 
-        df["id_deputado"] = df["id_deputado"].astype(str)
-        return df.merge(gastos_agg.drop(columns=["gastos_passagens_bsb"]), on="id_deputado", how="left")
-
-    def _calcular_produtividade(self, df: pd.DataFrame):
-        df.dropna(inplace=True)
+        # Remove passagens com origem OU destino em Brasília (a critério já acordado)
+        gastos_filtrados = self.gastos[
+            ~self.gastos["txtDescricao"].str.contains("PASSAGE", case=False, na=False)
+            | ~self.gastos["txtTrecho"].str.contains("BSB", case=False, na=False)
+        ]
         
-        df["ranking_gastos"] = df["total_gastos"].rank(method="dense", ascending=True)
-        df["ranking_produtividade"] = df["indice_produtividade"].rank(method="dense", ascending=False)
+        self.ind_gastos = (
+            gastos_filtrados
+            .groupby("idDeputado")["vlrLiquido"]
+            .sum()
+            .reset_index()
+            .rename(columns={"vlrLiquido": "gasto_ceap_ajustado"})
+        )
 
-        df["pontuacao_final"] = df["ranking_gastos"] + df["ranking_produtividade"]
-        df["ranking_final"] = df["pontuacao_final"].rank(method="dense")
-        
-        return df
+    def _classificar_tramitacao(self, situacao: str) -> str:
+        if not isinstance(situacao, str):
+            return "andamento"
+        situacao = situacao.lower()
+        if "norma jurídica" in situacao or "sanção" in situacao or "promulgação" in situacao or "senado" in situacao:
+            return "sucesso"
+        if "arquivada" in situacao or "retirado" in situacao or "prejudic" in situacao or "devolvida" in situacao or "recusado" in situacao:
+            return "fracasso"
+        return "andamento"
+
+    def _adicionar_tramitacoes(self):
+        if self.tramitacoes is None:
+            return
+
+        df = self.proposicoes.merge(
+            self.tramitacoes,
+            left_on="id", right_on="idProposicao", how="left"
+        )
+        df = df[["idDeputado", "descricaoSituacao"]].dropna()
+        df["categoriaSituacao"] = df["descricaoSituacao"].apply(self._classificar_tramitacao)
+
+        df_pct = (
+            df.groupby("idDeputado")["categoriaSituacao"]
+            .value_counts(normalize=True)
+            .unstack(fill_value=0)
+            .reset_index()
+            .rename(columns={
+                "sucesso": "pct_sucesso",
+                "fracasso": "pct_fracasso",
+                "andamento": "pct_andamento"
+            })
+        )
+
+        self.ind_tramitacao = df_pct
+
+    def _adicionar_temas(self):
+        if self.temas is None:
+            return
+
+        df = self.proposicoes.merge(
+            self.temas,
+            left_on="id", right_on="idProposicao", how="inner"
+        )
+
+        temas_por_dep = {}
+        for dep_id, grupo in df.groupby("idDeputado"):
+            temas_mais_comuns = (
+                grupo["tema"]
+                .value_counts()
+                .nlargest(3)
+                .index.tolist()
+            )
+
+            if len(temas_mais_comuns) == 1:
+                texto = temas_mais_comuns[0]
+            elif len(temas_mais_comuns) == 2:
+                texto = f"{temas_mais_comuns[0]} e {temas_mais_comuns[1]}"
+            elif len(temas_mais_comuns) == 3:
+                texto = f"{temas_mais_comuns[0]}, {temas_mais_comuns[1]} e {temas_mais_comuns[2]}"
+            else:
+                texto = ""
+
+            temas_por_dep[dep_id] = texto
+
+        self.ind_temas = (
+            pd.DataFrame.from_dict(temas_por_dep, orient="index", columns=["temas_destaque"])
+            .reset_index()
+            .rename(columns={"index": "idDeputado"})
+        )
+
+    def _juntar_resultados(self):
+        dfs = [
+            self.deputados,
+            self.ind_produtividade.rename(columns={"idDeputado": "idDeputado"}),
+            self.ind_gastos.rename(columns={"idDeputado": "idDeputado"}),
+        ]
+
+        if hasattr(self, "ind_tramitacao"):
+            dfs.append(self.ind_tramitacao)
+
+        if hasattr(self, "ind_temas"):
+            dfs.append(self.ind_temas)
+
+        resultado = dfs[0]
+        for df in dfs[1:]:
+            resultado = resultado.merge(df, on="idDeputado", how="left")
+
+        resultado["pontuacao_legislativa"] = resultado["produtividade_legislativa"].fillna(0)
+
+        mediana_pontuacao = resultado["pontuacao_legislativa"].median()
+        mediana_gasto = resultado["gasto_ceap_ajustado"].median()
+
+        def classificar_quadrante(row):
+            if row["pontuacao_legislativa"] >= mediana_pontuacao:
+                return "Alta produtividade e " + ("alto custo" if row["gasto_ceap_ajustado"] >= mediana_gasto else "baixo custo")
+            else:
+                return "Baixa produtividade e " + ("alto custo" if row["gasto_ceap_ajustado"] >= mediana_gasto else "baixo custo")
+
+        resultado["quadrante"] = resultado.apply(classificar_quadrante, axis=1)
+        resultado["ranking"] = resultado["pontuacao_legislativa"].rank(ascending=False, method="min").astype(int)
+
+        self.resultados = resultado
