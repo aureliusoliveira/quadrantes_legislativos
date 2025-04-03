@@ -1,5 +1,5 @@
 from legisdata.processamento.processador_carregamento import ProcessadorCarregamento
-from quadrantes_produtividade.legisdata.processamento.indicadores import IndicadoresParlamentares
+from legisdata.processamento.indicadores import IndicadoresParlamentares
 from legisdata.processamento.transformador_dados import TransformadorDados
 
 from legisdata.config import DIRETORIO_PROCESSED
@@ -22,8 +22,6 @@ gastos = dados_tratados['gastos']
 autores = dados_tratados['autores']
 temas = dados_tratados['temas']
 tramitacoes = dados_tratados['tramitacoes']
-
-
 
 deputados.to_csv(os.path.join(DIRETORIO_PROCESSED,"deputados.csv"), sep=",", index=False)
 proposicoes.to_csv(os.path.join(DIRETORIO_PROCESSED,"proposicoes.csv"), sep=",", index=False)

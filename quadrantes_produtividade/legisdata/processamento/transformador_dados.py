@@ -21,6 +21,7 @@ class TransformadorDados:
         df = self.dados["deputados"].copy()
         df["idDeputado"] = df["uri"].str.extract(r"(\d+)$")[0]
         df.drop_duplicates(subset=["idDeputado"], inplace=True)
+        df = df[["idDeputado", "nome"]]
         return df
 
     def _padronizar_gastos(self):
@@ -29,6 +30,7 @@ class TransformadorDados:
         df["ideCadastro"] = pd.to_numeric(df["ideCadastro"], errors="coerce").astype("Int64").astype(str)
         df["vlrLiquido"] = pd.to_numeric(df["vlrLiquido"], errors="coerce")
         df = df.rename(columns={"ideCadastro": "idDeputado"})
+        df = df[["idDeputado","sgUF","sgPartido","txtDescricao","txtTrecho","vlrLiquido"]]
         return df
 
     def _padronizar_proposicoes(self):

@@ -51,7 +51,7 @@ class IndicadoresParlamentares:
         
         self.ind_gastos = (
             gastos_filtrados
-            .groupby("idDeputado")["vlrLiquido"]
+            .groupby(["idDeputado", "sgUF", "sgPartido"])["vlrLiquido"]
             .sum()
             .reset_index()
             .rename(columns={"vlrLiquido": "gasto_ceap_ajustado"})
