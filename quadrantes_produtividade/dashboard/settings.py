@@ -1,6 +1,6 @@
-import os
+from pathlib import Path
 
-# Diretório raiz do projeto (relativo ao settings.py)
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent
 
-INDICADORES_PATH = os.path.join(ROOT_DIR, "data", "resultados.csv")
+INDICADORES_PATH = BASE_DIR / "data" / "resultados.csv"
+#PESOS_PATH = BASE_DIR / "static" / "mapa_pesos_proposicoes.csv"

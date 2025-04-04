@@ -156,6 +156,47 @@ class IndicadoresParlamentares:
                 return "Baixa produtividade e " + ("alto custo" if row["gasto_ceap_ajustado"] >= mediana_gasto else "baixo custo")
 
         resultado["quadrante"] = resultado.apply(classificar_quadrante, axis=1)
-        resultado["ranking"] = resultado["pontuacao_legislativa"].rank(ascending=False, method="min").astype(int)
+        resultado["ranking_leg"] = resultado["pontuacao_legislativa"].rank(ascending=False, method="dense").astype(int)
+        resultado["ranking_gastos"] = resultado["gasto_ceap_ajustado"].rank(ascending=True, method="dense").astype(int)
+        resultado["ranking_soma"] = resultado["ranking_leg"] + resultado["ranking_gastos"]
+        resultado["ranking"] = resultado["ranking_soma"].rank(ascending=True, method="dense").astype(int)
+        
 
         self.resultados = resultado
+
+if __name__ == "__main__":
+    # Exemplo de uso
+    dados = {
+        "deputados": pd.DataFrame({
+            "idDeputado": [1, 2],
+            "nome": ["Deputado A", "Deputado B"],
+        }),
+        "proposicoes": pd.DataFrame({
+            "id": [1, 2, 3],
+            "siglaTipo": ["PL", "PL", "PL"],
+            "peso": [0.5, 0.7, 0.9]
+        }),
+        "autores": pd.DataFrame({
+            "idProposicao": [1, 2, 3],
+            "idDeputado": [1, 1, 2]
+        }),
+        "gastos": pd.DataFrame({
+            "idDeputado": [1, 2],
+            "sgUF": ["SP", "RJ"],
+            "sgPartido": ["PT", "PSDB"],
+            "vlrLiquido": [1000, 2000],
+            "txtDescricao": ["GASTO A", "GASTO B"],
+            "txtTrecho": ["BSB - SP", "BSB - RJ"]
+        }),
+        "tramitacoes": pd.DataFrame({
+            "idProposicao": [1, 2],
+            "descricaoSituacao": ["Arquivada", "Aprovada"]
+        }),
+        "temas": pd.DataFrame({
+            "idProposicao": [1, 2],
+            "tema": ["Tema A", "Tema B"]
+        })
+    }
+
+    indicadores = IndicadoresParlamentares(dados)
+    print(indicadores.resultados)

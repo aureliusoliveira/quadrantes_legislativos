@@ -7,18 +7,40 @@ st.set_page_config(page_title="Quadrantes da Produtividade", layout="wide")
 st.title("📊 Quadrantes da Produtividade Legislativa")
 st.markdown("""
 Este dashboard apresenta os Quadrantes da Produtividade Legislativa, uma proposta de visualização que avalia os deputados federais da 57ª legislatura (2023–2026).
+
+🧠 Como construímos o ranking parlamentar?
+O ranking de produtividade legislativa foi definido com base em dois critérios principais:
+
+Produtividade legislativa
+
+Gasto ajustado com o mandato
+
+Cada um desses critérios gerou um ranking independente: um ordenando os deputados do mais ao menos produtivo, outro do que menos gastou para o que mais gastou.
+A pontuação final foi calculada a partir da composição desses dois rankings, resultando em uma média que define a posição de cada parlamentar no ranking geral.
+
+📈 Produtividade legislativa
+Leva em conta:
+
+A quantidade e o tipo de proposições apresentadas (com pesos diferentes por relevância)
+
+Os temas mais frequentes de atuação
+
+A situação das proposições (em tramitação, aprovadas ou rejeitadas)
+
+💰 Gasto ajustado com o mandato
+Consideramos o total gasto com a cota parlamentar (CEAP), mas excluímos as despesas com passagens aéreas envolvendo Brasília, já que são comuns a todos os mandatos. Isso torna a comparação mais justa entre deputados de diferentes estados.
+
+🟦 Os Quadrantes
+Com base nos valores medianos de produtividade e gasto, os parlamentares são distribuídos em quatro quadrantes:
+
+Alta produtividade e baixo custo
+
+Alta produtividade e alto custo
+
+Baixa produtividade e baixo custo
+
+Baixa produtividade e alto custo
             
-Este gráfico interativo posiciona cada deputado federal de acordo com dois eixos:
-
-- **Eixo X:** Pontuação de produtividade legislativa, calculada a partir do número e relevância das proposições apresentadas, com pesos diferenciados por tipo (ex: PECs, PLs, PLPs). Cada proposição recebe um peso e os autores acumulam pontos conforme sua participação.
-- **Eixo Y:** Gasto ajustado com a cota parlamentar (CEAP), considera os valores pagos com a Cota para o Exercício da Atividade Parlamentar (CEAP), excluindo despesas com passagens aéreas para Brasília.
-
-As **linhas tracejadas** indicam as medianas de produtividade e gasto, dividindo o gráfico em quatro quadrantes:
-
-1. 🟢 **Alta produtividade e baixo custo**
-2. 🔴 **Baixa produtividade e alto custo**
-3. 🟡 **Alta produtividade e alto custo**
-4. ⚫ **Baixa produtividade e baixo custo**
 
 ### 🧑‍💻 Como explorar:
 - **Passe o mouse sobre os pontos** para ver o mini perfil do deputado.
