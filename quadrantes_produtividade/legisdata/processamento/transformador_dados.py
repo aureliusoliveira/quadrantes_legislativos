@@ -1,4 +1,4 @@
-
+import ast
 import pandas as pd
 
 class TransformadorDados:
@@ -13,16 +13,38 @@ class TransformadorDados:
             "autores": self._padronizar_autores(),
             "tramitacoes": self._padronizar_tramitacoes(),
             "temas": self._padronizar_temas()
-            #"eventos": self._padronizar_eventos()
             
         }
 
     def _padronizar_deputados(self):
         df = self.dados["deputados"].copy()
-        df["idDeputado"] = df["uri"].str.extract(r"(\d+)$")[0]
-        df.drop_duplicates(subset=["idDeputado"], inplace=True)
-        df = df[["idDeputado", "nome"]]
-        return df
+
+        # Converte o campo 'ultimoStatus' de string para dicionário
+        df["ultimoStatus"] = df["ultimoStatus"].apply(ast.literal_eval)
+
+        # Extrai os campos relevantes de 'ultimoStatus'
+        df_status = df["ultimoStatus"].apply(pd.Series)[[
+            "id", "nomeEleitoral", "siglaUf", "siglaPartido",
+            "idLegislatura", "situacao", "condicaoEleitoral"
+        ]]
+
+        df_status["id"] = df_status["id"].astype(int).astype(str)
+
+        # Remove duplicatas e garante consistência
+        df_status.drop_duplicates(subset=["id"], inplace=True)
+        
+        # Renomeia colunas conforme convenção do projeto
+        df_status = df_status.rename(columns={
+            "siglaUf": "sgUF",
+            "siglaPartido": "sgPartido",
+            "nomeEleitoral": "nome",
+            "id": "idDeputado"            
+        })
+
+        df_status = df_status.loc[(df_status.situacao == "Exercício") & 
+                                  (df_status.idLegislatura == 57), :].copy()
+        return df_status
+
 
     def _padronizar_gastos(self):
         df = self.dados["gastos"].copy()
@@ -30,7 +52,7 @@ class TransformadorDados:
         df["ideCadastro"] = pd.to_numeric(df["ideCadastro"], errors="coerce").astype("Int64").astype(str)
         df["vlrLiquido"] = pd.to_numeric(df["vlrLiquido"], errors="coerce")
         df = df.rename(columns={"ideCadastro": "idDeputado"})
-        df = df[["idDeputado","sgUF","sgPartido","txtDescricao","txtTrecho","vlrLiquido"]]
+        df = df.loc[df.codLegislatura == 57, ["idDeputado", "txtDescricao","txtTrecho","vlrLiquido"]].copy()
         return df
 
     def _padronizar_proposicoes(self):
@@ -48,12 +70,6 @@ class TransformadorDados:
         df["idDeputadoAutor"] = df["idDeputadoAutor"].astype(int).astype(str)
         df = df.rename(columns={"idDeputadoAutor": "idDeputado"})
         return df
-
-# =============================================================================
-#     def _padronizar_eventos(self):
-#         df = self.dados["eventos"].copy()
-#         return df  # poderá ser expandido depois
-# =============================================================================
 
     def _padronizar_tramitacoes(self):
         df = self.dados["tramitacoes"].copy()

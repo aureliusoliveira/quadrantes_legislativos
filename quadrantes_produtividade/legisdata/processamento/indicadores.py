@@ -2,6 +2,7 @@ import os
 import pandas as pd
 
 
+
 class IndicadoresParlamentares:
     def __init__(self, dados: dict, caminho_pesos: str = None):
         self.deputados = dados["deputados"]
@@ -11,7 +12,7 @@ class IndicadoresParlamentares:
         self.tramitacoes = dados["tramitacoes"]
         self.temas = dados["temas"]
 
-        self.caminho_pesos = caminho_pesos or os.path.join("legisdata", "static", "mapa_pesos_proposicoes.csv")
+        self.caminho_pesos = caminho_pesos
 
         self._adicionar_autores()
         self._mapear_pesos()
@@ -41,6 +42,7 @@ class IndicadoresParlamentares:
             .sum()
             .reset_index()
             .rename(columns={"peso": "produtividade_legislativa"})
+            .fillna(0)
         )
 
         # Remove passagens com origem OU destino em Brasília (a critério já acordado)
@@ -51,10 +53,11 @@ class IndicadoresParlamentares:
         
         self.ind_gastos = (
             gastos_filtrados
-            .groupby(["idDeputado", "sgUF", "sgPartido"])["vlrLiquido"]
+            .groupby(["idDeputado"])["vlrLiquido"]
             .sum()
             .reset_index()
             .rename(columns={"vlrLiquido": "gasto_ceap_ajustado"})
+            .fillna(0)
         )
 
     def _classificar_tramitacao(self, situacao: str) -> str:

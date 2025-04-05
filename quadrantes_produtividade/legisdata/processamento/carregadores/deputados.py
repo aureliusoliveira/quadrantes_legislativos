@@ -13,5 +13,5 @@ class CarregadorDeputados(CarregadorBase):
     def carregar(self, anos=None):
         path = os.path.join(DIRETORIO_RAW, "deputados", "deputados.csv")
         return pd.read_csv(path,
-                           sep=";", 
+                           sep=",", 
                            encoding="utf-8-sig")

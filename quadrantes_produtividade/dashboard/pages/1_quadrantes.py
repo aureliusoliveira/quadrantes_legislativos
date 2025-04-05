@@ -51,7 +51,7 @@ Baixa produtividade e alto custo
 
 
 # Carregamento dos dados
-df = pd.read_csv(INDICADORES_PATH)
+df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
 
 # Filtros interativos
 col1 = st.columns(1)[0]
