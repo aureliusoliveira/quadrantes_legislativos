@@ -68,5 +68,9 @@ class IndicadoresGerais:
         resultado["ranking_gastos"] = resultado["gasto_ceap_ajustado"].rank(ascending=True, method="dense").astype(int)
         resultado["ranking_soma"] = resultado["ranking_leg"] + resultado["ranking_gastos"]
         resultado["ranking"] = resultado["ranking_soma"].rank(ascending=True, method="dense").astype(int)
+        resultado = resultado.sort_values("ranking", ascending=True).reset_index(drop=True)
+        resultado.drop(columns=["ranking_leg", "ranking_gastos", "ranking_soma"], inplace=True)
+        resultado["ranking"] = resultado["ranking"].astype(int)
+        
 
         return resultado

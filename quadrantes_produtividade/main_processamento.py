@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # Calcular indicadores
     indicadores = IndicadoresGerais(dados_tratados, caminho_pesos=MAPA_DE_PESOS)
     resultado = indicadores.calcular()
-    resultado.to_csv(os.path.join(DIRETORIO_DASHBOARD_DATA, "resultado.csv"), sep=";", index=False)
+    resultado.to_csv(os.path.join(DIRETORIO_DASHBOARD_DATA, "resultados.csv"), sep=";", index=False)
 
     # Exibir resultado
     print(resultado.shape)

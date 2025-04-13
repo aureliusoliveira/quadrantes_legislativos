@@ -45,7 +45,6 @@ Baixa produtividade e alto custo
 ### 🧑‍💻 Como explorar:
 - **Passe o mouse sobre os pontos** para ver o mini perfil do deputado.
 - **Clique nas legendas dos partidos** para filtrar a visualização.
-- **Use os filtros acima** para focar por estado (UF).
 - Abaixo, veja o **ranking completo** dos parlamentares.
 """)
 
@@ -54,18 +53,18 @@ Baixa produtividade e alto custo
 df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
 
 # Filtros interativos
-col1 = st.columns(1)[0]
-ufs = sorted(df["sgUF"].dropna().unique())
-filtro_uf = col1.multiselect("Filtrar por UF:", ufs, default=ufs)
+#col1 = st.columns(1)[0]
+#ufs = sorted(df["sgUF"].dropna().unique())
+#filtro_uf = col1.multiselect("Filtrar por UF:", ufs, default=ufs)
 
 # Aplicar filtros
-df_filtrado = df[
-    (df["sgUF"].isin(filtro_uf))
-]
+#df_filtrado = df[
+#    (df["sgUF"].isin(filtro_uf))
+#]
 
-if df_filtrado.empty:
-    st.warning("Nenhum deputado encontrado com os filtros selecionados.")
-    st.stop()
+#if df_filtrado.empty:
+#    st.warning("Nenhum deputado encontrado com os filtros selecionados.")
+#    st.stop()
 
 # Gráfico interativo
 fig = grafico_quadrantes_interativo(df_filtrado)
@@ -92,9 +91,9 @@ ranking_df = ranking_df[colunas_exibidas].rename(columns={
 })
 
 # Formata valores de gasto
-ranking_df["Gasto CEAP Ajustado (R$)"] = ranking_df["Gasto CEAP Ajustado (R$)"].apply(
-    lambda x: f"R$ {x:,.0f}".replace(",", ".")
-)
+#ranking_df["Gasto CEAP Ajustado (R$)"] = ranking_df["Gasto CEAP Ajustado (R$)"].apply(
+#    lambda x: f"R$ {x:,.0f}".replace(",", ".")
+#)
 
 # Exibe tabela
 st.dataframe(ranking_df, use_container_width=True, height=600)
