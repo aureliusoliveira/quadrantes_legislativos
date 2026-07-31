@@ -15,9 +15,23 @@ class IndicadoresProposicoes(IndicadoresBase):
         try:
             mapa = pd.read_csv(self.caminho_pesos, sep=";")
             pesos = dict(zip(mapa["siglaTipo"], mapa["peso"]))
-            df["peso"] = df["siglaTipo"].map(pesos).fillna(0)
         except Exception as e:
             raise ValueError(f"Erro ao carregar o mapa de pesos: {e}")
+
+        # Um tipo fora do mapa não pode virar peso zero em silêncio: seria a
+        # Câmara criando uma sigla e a produtividade daquele tipo desaparecendo
+        # sem nenhum sinal, com o número errado seguindo para o dashboard. Peso
+        # zero continua possível — mas declarado como linha do mapa.
+        desconhecidos = sorted(set(df["siglaTipo"].dropna()) - set(pesos))
+        if desconhecidos:
+            raise ValueError(
+                "Tipos de proposição ausentes do mapa de pesos: "
+                f"{', '.join(desconhecidos)}. "
+                f"Declare o peso de cada um em {self.caminho_pesos} — inclusive "
+                "quando o peso pretendido for zero."
+            )
+
+        df["peso"] = df["siglaTipo"].map(pesos)
 
         return (
             df.groupby("idDeputado")["peso"]

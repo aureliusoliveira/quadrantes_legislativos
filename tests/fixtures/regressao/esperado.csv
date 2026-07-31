@@ -1,0 +1,6 @@
+idDeputado;produtividade_legislativa;gasto_ceap_ajustado;pct_sucesso;pct_fracasso;pct_andamento;temas_destaque;quadrante;ranking
+100;2.8;12000.00;0.50;0.25;0.25;Saúde e Educação;Alta produtividade e alto custo;1
+200;1.6;50000.00;0.00;0.50;0.50;Economia;Alta produtividade e alto custo;3
+300;0.7;8000.00;0.00;0.50;0.50;Cultura;Baixa produtividade e baixo custo;2
+400;2.4;22000.00;0.6666666666666666;0.00;0.3333333333333333;Segurança e Saúde;Alta produtividade e alto custo;2
+500;0.4;1500.00;0.00;0.00;1.00;Segurança;Baixa produtividade e baixo custo;2
