@@ -24,13 +24,12 @@ dev = [
     "pytest>=8.3",
 ]
 
-# O projeto ainda não é um pacote instalável: `legisdata` vive dentro de
-# `quadrantes_produtividade/`. O achatamento da árvore é o Incremento 1; até lá
-# o pytest resolve o import por pythonpath.
+# O projeto não é distribuído como pacote instalável — é uma aplicação. O uv
+# gerencia apenas o ambiente, e o pytest resolve `legisdata` pela raiz.
 [tool.uv]
 package = false
 
 [tool.pytest.ini_options]
-pythonpath = ["quadrantes_produtividade"]
+pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-ra"

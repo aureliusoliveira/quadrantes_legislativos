@@ -57,13 +57,12 @@ def grafico_quadrantes_interativo(df):
             text=f"Mediana Produtividade ({mediana_produtividade:.1f})",
             showarrow=False,
             yshift=15
-
         ),
         dict(
             x=df["produtividade_legislativa"].max(), y=mediana_gasto,
             text=f"Mediana Gasto (R$ {mediana_gasto:,.2f})".replace(",", "."),
             showarrow=False,
-            xshift=90
+            yshift=10
         )
     ]
 

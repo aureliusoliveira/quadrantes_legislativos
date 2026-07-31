@@ -1,4 +1,4 @@
-.PHONY: setup test requirements check-requirements
+.PHONY: setup test dashboard requirements check-requirements
 
 REQ_TMP := $(shell mktemp -u)
 
@@ -15,6 +15,10 @@ setup:
 
 test:
 	uv run pytest
+
+# Mesmo entrypoint que o Streamlit Cloud usa.
+dashboard:
+	uv run streamlit run dashboard/app.py
 
 requirements:
 	@$(call gerar_req,requirements.txt)

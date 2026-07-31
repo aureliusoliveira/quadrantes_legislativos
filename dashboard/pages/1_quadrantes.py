@@ -45,6 +45,7 @@ Baixa produtividade e alto custo
 ### 🧑‍💻 Como explorar:
 - **Passe o mouse sobre os pontos** para ver o mini perfil do deputado.
 - **Clique nas legendas dos partidos** para filtrar a visualização.
+- **Use os filtros acima** para focar por estado (UF).
 - Abaixo, veja o **ranking completo** dos parlamentares.
 """)
 
@@ -65,10 +66,22 @@ df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
 #if df_filtrado.empty:
 #    st.warning("Nenhum deputado encontrado com os filtros selecionados.")
 #    st.stop()
+df_filtrado = df.copy() # Para fins de teste, removendo o filtro de UF
+
+# DIVERGÊNCIA CONHECIDA (M2): a coluna `ranking` vinda do pipeline é o ranking
+# composto (produtividade + gasto), mas o que se exibe aqui é ranking de
+# produtividade pura. Até este commit isso acontecia dentro de
+# grafico_quadrantes_interativo(), que mutava o DataFrame do chamador in-place —
+# então a tabela abaixo herdava a sobrescrita sem que isso estivesse escrito em
+# lugar nenhum. O cálculo foi trazido para cá sem alterar o resultado exibido.
+# A decisão sobre qual ranking o produto deve publicar é da Fase 2.
+df_filtrado["ranking"] = (
+    df_filtrado["produtividade_legislativa"].rank(ascending=False, method="min").astype(int)
+)
 
 # Gráfico interativo
 fig = grafico_quadrantes_interativo(df_filtrado)
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # Ranking
 st.markdown("### 🏆 Ranking Parlamentar")
@@ -96,4 +109,4 @@ ranking_df = ranking_df[colunas_exibidas].rename(columns={
 #)
 
 # Exibe tabela
-st.dataframe(ranking_df, use_container_width=True, height=600)
+st.dataframe(ranking_df, width="stretch", height=600)

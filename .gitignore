@@ -35,9 +35,10 @@ db.sqlite3
 # Dependências do Node.js (caso use Dash ou frontend adicional)
 node_modules/
 
-# Aquivos de dados para análise
-quadrantes_produtividade/data/
-quadrantes_produtividade/checkpoints/
+# Dado bruto e tratado nunca vai para o Git. O único dado versionado é o
+# resultado servido ao dashboard (dashboard/data/resultados.csv).
+data/
+checkpoints/
 
 # Variáveis de ambiente
 *.env
