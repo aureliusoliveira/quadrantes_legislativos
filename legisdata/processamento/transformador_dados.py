@@ -1,9 +1,15 @@
 import ast
+
 import pandas as pd
 
+from legisdata import config
+
 class TransformadorDados:
-    def __init__(self, dados: dict):
+    def __init__(self, dados: dict, legislatura: int | None = None):
         self.dados = dados.copy()
+        # A legislatura era literal `57` em dois filtros. Como parâmetro, uma
+        # recarga de legislatura anterior deixa de exigir edição de código.
+        self.legislatura = legislatura if legislatura is not None else config.LEGISLATURA_ALVO
 
     def transformar(self) -> dict:
         return {
@@ -41,8 +47,11 @@ class TransformadorDados:
             "id": "idDeputado"            
         })
 
-        df_status = df_status.loc[(df_status.situacao == "Exercício") & 
-                                  (df_status.idLegislatura == 57), :].copy()
+        df_status = df_status.loc[
+            (df_status.situacao == "Exercício")
+            & (df_status.idLegislatura == self.legislatura),
+            :,
+        ].copy()
         return df_status
 
 
@@ -52,7 +61,10 @@ class TransformadorDados:
         df["ideCadastro"] = pd.to_numeric(df["ideCadastro"], errors="coerce").astype("Int64").astype(str)
         df["vlrLiquido"] = pd.to_numeric(df["vlrLiquido"], errors="coerce")
         df = df.rename(columns={"ideCadastro": "idDeputado"})
-        df = df.loc[df.codLegislatura == 57, ["idDeputado", "txtDescricao","txtTrecho","vlrLiquido"]].copy()
+        df = df.loc[
+            df.codLegislatura == self.legislatura,
+            ["idDeputado", "txtDescricao", "txtTrecho", "vlrLiquido"],
+        ].copy()
         return df
 
     def _padronizar_proposicoes(self):

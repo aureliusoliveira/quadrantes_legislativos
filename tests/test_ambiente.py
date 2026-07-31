@@ -5,14 +5,16 @@ estiverem declaradas no ambiente. Este teste falha quando o ambiente declarado
 não cobre o que o código realmente importa — foi o caso do `requests`, que era
 usado pela coleta sem constar do requirements.txt.
 
-`main_coleta.py` fica de fora de propósito: o módulo não tem guarda
-`if __name__ == "__main__"`, então importá-lo dispara a coleta inteira.
+Os entrypoints entram na varredura desde que ganharam guarda
+`if __name__ == "__main__"` — antes disso, importar `main_coleta` disparava a
+coleta inteira, o que é exatamente o motivo de a guarda existir.
 """
 
 import importlib
 import os
 import pkgutil
 import subprocess
+from datetime import date
 
 import pytest
 
@@ -27,9 +29,21 @@ def _modulos_do_pacote(pacote):
     )
 
 
-@pytest.mark.parametrize("nome_modulo", _modulos_do_pacote(legisdata))
+ENTRYPOINTS = ["main_coleta", "main_processamento"]
+
+
+@pytest.mark.parametrize("nome_modulo", _modulos_do_pacote(legisdata) + ENTRYPOINTS)
 def test_modulo_importa_sem_dependencia_ausente(nome_modulo):
     importlib.import_module(nome_modulo)
+
+
+def test_anos_do_pipeline_incluem_o_ano_corrente():
+    """O bug de origem, no nível em que ele chegava ao usuário: rodar hoje e o
+    pipeline não trazer o ano de hoje."""
+    assert date.today().year in config.ANOS, (
+        f"ANOS={config.ANOS} não cobre {date.today().year} — o pipeline não "
+        "traria dado novo nesta execução"
+    )
 
 
 @pytest.mark.parametrize(

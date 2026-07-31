@@ -1,22 +1,29 @@
+"""Pipeline de processamento: transforma o bruto em indicadores publicáveis."""
+
+import os
+
+from legisdata.config import ANOS, DIRETORIO_DASHBOARD_DATA, LEGISLATURA_ALVO, MAPA_DE_PESOS
 from legisdata.indicadores.indicadores_gerais import IndicadoresGerais
 from legisdata.processamento.processador_carregamento import ProcessadorCarregamento
 from legisdata.processamento.transformador_dados import TransformadorDados
-from legisdata.config import MAPA_DE_PESOS, DIRETORIO_DASHBOARD_DATA
-import os
 
-#MAPA_DE_PESOS = "dados/mapa_pesos_proposicoes.csv"
-ANOS = [2023, 2024, 2025]
+
+def processar(anos=None, legislatura=None):
+    anos = anos if anos is not None else ANOS
+    legislatura = legislatura if legislatura is not None else LEGISLATURA_ALVO
+
+    dados_brutos = ProcessadorCarregamento(anos).processar()
+    dados_tratados = TransformadorDados(dados_brutos, legislatura=legislatura).transformar()
+
+    indicadores = IndicadoresGerais(dados_tratados, caminho_pesos=MAPA_DE_PESOS)
+    return indicadores.calcular()
+
 
 if __name__ == "__main__":
-    # Carregar e transformar dados
-    dados_brutos = ProcessadorCarregamento(ANOS).processar()
-    dados_tratados = TransformadorDados(dados_brutos).transformar()
+    resultado = processar()
 
-    # Calcular indicadores
-    indicadores = IndicadoresGerais(dados_tratados, caminho_pesos=MAPA_DE_PESOS)
-    resultado = indicadores.calcular()
-    resultado.to_csv(os.path.join(DIRETORIO_DASHBOARD_DATA, "resultados.csv"), sep=";", index=False)
+    destino = os.path.join(DIRETORIO_DASHBOARD_DATA, "resultados.csv")
+    resultado.to_csv(destino, sep=";", index=False)
 
-    # Exibir resultado
-    print(resultado.shape)
-    print(resultado.sample(10))
+    print(f"✅ {len(resultado)} parlamentares em {destino}")
+    print(resultado.sample(min(10, len(resultado))))
