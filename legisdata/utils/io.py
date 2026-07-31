@@ -1,6 +1,30 @@
 import os
 import zipfile
 
+import pandas as pd
+
+
+def ler_csv_da_fonte(caminho: str, sep: str = ";") -> pd.DataFrame:
+    """Lê um CSV da fonte sem descartar linha em silêncio.
+
+    Os carregadores usavam `on_bad_lines="skip"`, que perde linha malformada sem
+    contar quantas — num projeto cuja proposta é rastrear qualquer número até o
+    dado bruto, isso é perda invisível de dado. Aqui a linha malformada
+    interrompe a carga e diz em qual arquivo está: o bruto fica no disco para
+    inspeção, e nenhum número errado segue para o dashboard.
+
+    Também usa o motor C (5x mais rápido no CEAP, mesmo resultado) e
+    `low_memory=False`, que evita o pandas inferir tipos diferentes por bloco
+    dentro de um mesmo arquivo.
+    """
+    try:
+        return pd.read_csv(
+            caminho, sep=sep, encoding="utf-8-sig", engine="c", low_memory=False
+        )
+    except pd.errors.ParserError as e:
+        raise ValueError(f"Arquivo de fonte malformado: {caminho}. {e}") from e
+
+
 def salvar_csv(df, caminho):
     """
     Salva um DataFrame em formato CSV no caminho especificado.
