@@ -1,9 +1,14 @@
-# Ambientes Virtuais PipEnv
-Pipfile.lock
+# Ambiente virtual (uv.lock é versionado de propósito — é ele que torna o
+# ambiente reproduzível)
+.venv/
+
+# Cache de testes
+.pytest_cache/
 
 # Arquivos do sistema (Windows/macOS/Linux)
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 
 # Configurações do VSCode
 .vscode/

@@ -1,0 +1,36 @@
+[project]
+name = "quadrantes-legislativos"
+version = "0.1.0"
+description = "Quadrantes da Produtividade Legislativa — custo de mandato x produtividade de deputados federais"
+readme = "README.md"
+requires-python = ">=3.12"
+# license: em aberto no PRD ("Licença do código e dos dados"). O README declara
+# MIT, mas não há LICENSE no repositório — decisão pendente, não presumida aqui.
+
+# Dependências de execução. Tudo que `legisdata` e o dashboard importam precisa
+# estar aqui: até este commit, `requests` só funcionava por ser dependência
+# transitiva do streamlit, e `python-dotenv`/`wget` não constavam em lugar nenhum.
+dependencies = [
+    "pandas>=2.2",
+    "plotly>=5.24",
+    "python-dotenv>=1.0",
+    "requests>=2.32",
+    "streamlit>=1.40",
+    "wget>=3.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+]
+
+# O projeto ainda não é um pacote instalável: `legisdata` vive dentro de
+# `quadrantes_produtividade/`. O achatamento da árvore é o Incremento 1; até lá
+# o pytest resolve o import por pythonpath.
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["quadrantes_produtividade"]
+testpaths = ["tests"]
+addopts = "-ra"

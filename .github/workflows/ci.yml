@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+
+# Toda branch de PR também é uma branch empurrada, então o gatilho de push já
+# cobre o PR. Sem `pull_request`, para não gastar dois runs no mesmo commit.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Nenhum job desta pipeline pode depender de rede para passar: os testes usam
+# fixtures locais. Ver docs/ (Fase 1, frente 3 — testes de contrato).
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Instalar Python e dependências travadas
+        run: uv sync --locked
+
+      - name: Testes
+        run: uv run pytest
+
+      - name: requirements.txt em sincronia com o lock
+        run: make check-requirements
