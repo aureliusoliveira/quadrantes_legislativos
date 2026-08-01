@@ -63,3 +63,21 @@ def test_diretorio_de_dados_nao_vai_para_o_git(diretorio):
         cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     )
     assert resultado.returncode == 0, f"{alvo} não está coberto pelo .gitignore"
+
+
+def test_artefato_publicado_nao_e_ignorado_pelo_git():
+    """O contrário do teste acima, e a razão de ele existir.
+
+    O padrão `data/` casa com diretório de qualquer nível, inclusive
+    `dashboard/data/` — onde mora o artefato que o Streamlit Cloud serve. O
+    resultados.csv só sobrevive porque já era rastreado antes; um arquivo novo
+    publicado ali entraria no .gitignore sem nenhum sinal, e o deploy passaria a
+    servir dado velho sem ninguém perceber.
+    """
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    alvo = os.path.join(raiz, "dashboard", "data", "arquivo-novo.csv")
+    resultado = subprocess.run(["git", "check-ignore", "-q", alvo], cwd=raiz)
+    assert resultado.returncode != 0, (
+        "dashboard/data/ está coberto pelo .gitignore — artefato publicado novo "
+        "seria descartado em silêncio"
+    )

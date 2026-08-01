@@ -36,9 +36,16 @@ db.sqlite3
 node_modules/
 
 # Dado bruto e tratado nunca vai para o Git. O único dado versionado é o
-# resultado servido ao dashboard (dashboard/data/resultados.csv).
+# resultado servido ao dashboard (dashboard/data/).
 data/
 checkpoints/
+
+# `data/` casa com qualquer diretório com esse nome em qualquer nível, e isso
+# inclui o do dashboard. O resultados.csv sobrevive só porque já era rastreado:
+# qualquer arquivo novo publicado ali seria ignorado em silêncio, que é
+# exatamente o tipo de falha que este projeto existe para não ter.
+!dashboard/data/
+!dashboard/data/**
 
 # Variáveis de ambiente
 *.env
