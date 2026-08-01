@@ -10,16 +10,26 @@ import pytest
 
 PESOS_DE_TESTE = pd.DataFrame(
     {
-        "siglaTipo": ["PL", "PEC", "REQ"],
-        "descricaoTipo": ["Projeto de Lei", "Proposta de Emenda à Constituição", "Requerimento"],
-        "peso": [1.0, 1.0, 0.4],
+        "siglaTipo": ["PL", "PEC", "REQ", "ATA"],
+        "descricaoTipo": [
+            "Projeto de Lei",
+            "Proposta de Emenda à Constituição",
+            "Requerimento",
+            "Ata",
+        ],
+        "peso": [1.0, 1.0, 0.4, 0.0],
     }
 )
 
 
 @pytest.fixture
 def caminho_pesos(tmp_path):
-    """Mapa de pesos reduzido: PL e PEC valem 1,0; REQ vale 0,4."""
+    """Mapa reduzido: PL e PEC valem 1,0; REQ vale 0,4; ATA é o tipo de peso zero.
+
+    O peso zero não é detalhe do mapa — é o que declara que um tipo não conta
+    como produção legislativa, e portanto não entra em nenhuma das dimensões
+    publicadas. Ver docs/universo_e_pesos.md.
+    """
     caminho = tmp_path / "mapa_pesos.csv"
     PESOS_DE_TESTE.to_csv(caminho, sep=";", index=False)
     return str(caminho)

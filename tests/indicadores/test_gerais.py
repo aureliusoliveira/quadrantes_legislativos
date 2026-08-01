@@ -185,3 +185,42 @@ def test_colunas_publicadas_estao_presentes(caminho_pesos):
     # colunas intermediárias não vazam para o resultado
     for coluna in ["ranking_leg", "ranking_gastos", "ranking_soma"]:
         assert coluna not in r.columns
+
+
+def test_tipo_de_peso_zero_nao_entra_em_nenhuma_dimensao(caminho_pesos):
+    """Peso zero declara "isto não é produção legislativa" — e a declaração vale
+    para as duas dimensões publicadas.
+
+    O caso concreto veio da troca da fonte pelo arquivo consolidado, que trouxe
+    76 mil requerimentos de votação nominal na legislatura. Contados só na
+    eficácia, eles dominariam o denominador e as taxas passariam a descrever o
+    destino do procedimento, não o da produção.
+    """
+    dados = montar_dados({"10": 1, "20": 1}, {"10": 1000.0, "20": 2000.0})
+    atas = [{"id": f"a{i}", "siglaTipo": "ATA"} for i in range(5)]
+    dados["proposicoes"] = pd.concat(
+        [dados["proposicoes"], pd.DataFrame(atas)], ignore_index=True
+    )
+    dados["autores"] = pd.concat(
+        [
+            dados["autores"],
+            pd.DataFrame(
+                [{"idProposicao": a["id"], "idDeputado": "10", "nomeAutor": "Dep 10"} for a in atas]
+            ),
+        ],
+        ignore_index=True,
+    )
+    dados["tramitacoes"] = pd.DataFrame(
+        {
+            "idProposicao": ["1"] + [a["id"] for a in atas],
+            "descricaoSituacao": ["Arquivada"] + ["Transformado em Norma Jurídica"] * len(atas),
+        }
+    )
+
+    resultado = IndicadoresGerais(dados, caminho_pesos).calcular().set_index("idDeputado")
+
+    assert resultado.loc["10", "produtividade_legislativa"] == 1.0
+    assert resultado.loc["10", "pct_fracasso"] == 1.0, (
+        "as atas entraram no denominador da eficácia"
+    )
+    assert resultado.loc["10", "pct_sucesso"] == 0.0

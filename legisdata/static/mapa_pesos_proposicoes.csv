@@ -27,3 +27,78 @@ TVR;Termo de Votação/Relatório;0.3
 AVN;Avulso de Proposição;0.1
 CTR;Contrarrazões;0.1
 PFO;Proposição fora da numeração convencional;0.1
+AA;Autógrafo;0.0
+ADD;Adendo;0.0
+APJ;Anteprojeto;0.2
+ATA;Ata;0.0
+ATA_PRE;Ata Preparatória;0.0
+CAC;Comunicado de Alteração do Controle Societário;0.0
+CAE;Relatório do CAE;0.0
+CFIS;Relatório de Atividades do Comitê de Avaliação, Fiscalização e Controle de Execução Orçamentária;0.0
+CMC;Comunicação de Medida Cautelar;0.0
+COI;Relatório do COI;0.0
+CON;Consulta;0.2
+CVO;Complementação de Voto;0.0
+DOC;Documento;0.0
+DTQ;Destaque para Votação em Separado;0.0
+EMA;Emenda Aglutinativa;0.3
+EMC-A;Emenda Adotada pela Comissão;0.0
+EML;Emenda à LDO;0.3
+EMO;Emenda ao Orçamento;0.3
+EMP;Emenda de Plenário a Projeto com Urgência;0.3
+EMR;Emenda de Relator;0.3
+EMS;Emenda/Substitutivo do Senado;0.0
+ERD;Emenda de Redação em Plenário;0.1
+ERR;Errata;0.0
+ESB;Emenda ao Substitutivo;0.3
+INA;Indicação de Autoridade;0.2
+INC;Indicação;0.4
+MAN;Manifestação do Relator;0.0
+MCN;Mensagem (CN) de Contas do Governo da República, MCN;0.0
+MST;Mensagem (STF);0.0
+OBJ;Objeto de Deliberação;0.0
+OF;Ofício;0.0
+PAR;Parecer de Comissão;0.0
+PARF;Parecer de Comissão para Redação Final;0.0
+PEP;Parecer às Emendas de Plenário;0.0
+PES;Parecer às Emendas Apresentadas ao Substitutivo do Relator;0.0
+PFC;Proposta de Fiscalização e Controle;0.6
+PIN;Proposta de Instrução Normativa;0.2
+PLN;Projeto de Lei (CN) de Crédito Suplementar;0.0
+PPP;Parecer Proferido em Plenário;0.0
+PPR;Parecer Reformulado de Plenário;0.0
+PRLE;Parecer Preliminar às Emendas de Plenário;0.0
+PRLP;Parecer Preliminar de Plenário;0.0
+PRO;Proposta;0.2
+PROC;Processo Interno;0.0
+PRR;Parecer Reformulado;0.0
+PRV;Parecer Vencedor;0.0
+PSS;Parecer às Emendas ou ao Substitutivo do Senado;0.0
+RAT;Relatório Setorial;0.0
+RCP;Requerimento de Instituição de CPI;0.6
+RDF;Redação Final;0.0
+REC;Recurso contra decisão do Presidente da CD em Questao de Ordem (Art. 95, § 8º, RICD);0.0
+REL-A;Relatório Adotado pela Comissão;0.0
+REM;Reclamação;0.2
+REP;Representação;0.2
+RLF;Relatório Final;0.0
+RLP;Relatório Prévio;0.0
+RPD;Requerimento de Votação pelo Processo Nominal;0.0
+RPDR;Requerimento Procedimental Genérico de Sessão/Reunião;0.0
+RPL;Relatório Preliminar;0.0
+RPLE;Relatório Preliminar Apresentado com Emendas;0.0
+RPLOA;Relatório Preliminar;0.0
+RRC;Relatório de Receita;0.0
+RRL;Relatório do Relator (CMO);0.0
+SAP;Sustação de Andamento de Ação Penal;0.9
+SBE;Subemenda;0.3
+SBE-A;Subemenda Adotada pela Comissão;0.0
+SBR;Subemenda de Relator;0.3
+SBT-A;Substitutivo adotado pela Comissão;0.0
+SIT;Solicitação de Informação ao TCU;0.6
+SLD;Sugestão de Emenda à LDO - Comissões;0.3
+SOR;Sugestão de Emenda ao Orçamento - Comissões;0.3
+SPP;Sugestão de Emenda ao PPA - Comissões;0.3
+SSP;Subemenda Substitutiva de Plenário;0.3
+SUG;Sugestão;0.2
+VTS;Voto em Separado;0.0

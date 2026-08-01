@@ -3,6 +3,7 @@ from .indicadores_proposicoes import IndicadoresProposicoes
 from .indicadores_gastos import IndicadoresGastos
 from .indicadores_tramitacao import IndicadoresTramitacao
 from .indicadores_temas import IndicadoresTemas
+from .pesos import MapaDePesos
 
 class IndicadoresGerais:
     def __init__(self, dados: dict, caminho_pesos: str):
@@ -11,6 +12,12 @@ class IndicadoresGerais:
 
     def calcular(self) -> pd.DataFrame:
         indicadores = []
+
+        # As duas dimensões medem o mesmo universo. Sem isto, os 76 mil
+        # requerimentos de votação nominal da legislatura — que valem zero na
+        # produtividade — dominariam o denominador das taxas de eficácia e
+        # descreveriam o destino do procedimento, não o da produção legislativa.
+        producao = MapaDePesos(self.caminho_pesos).producao(self.dados["proposicoes"])
 
         indicadores.append(
             IndicadoresProposicoes(
@@ -29,7 +36,7 @@ class IndicadoresGerais:
         if self.dados.get("tramitacoes") is not None:
             indicadores.append(
                 IndicadoresTramitacao(
-                    self.dados["proposicoes"],
+                    producao,
                     self.dados["tramitacoes"],
                     self.dados["autores"]
                 ).calcular()
@@ -38,7 +45,7 @@ class IndicadoresGerais:
         if self.dados.get("temas") is not None:
             indicadores.append(
                 IndicadoresTemas(
-                    self.dados["proposicoes"],
+                    producao,
                     self.dados["temas"],
                     self.dados["autores"]
                 ).calcular()
