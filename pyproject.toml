@@ -22,6 +22,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8.3",
+    "responses>=0.26.2",
 ]
 
 # O projeto não é distribuído como pacote instalável — é uma aplicação. O uv
