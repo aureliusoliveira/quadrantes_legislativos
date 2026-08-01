@@ -82,9 +82,14 @@ arquivo.
 - `tests/test_reconciliacao_gastos.py` — compara o número publicado com a fonte
   bruta, usando a regra de produção. Pulado quando não há `data/raw/`.
 
-O teste de reconciliação está marcado `xfail(strict=True)` enquanto o artefato
-publicado for o antigo. Quando o Incremento 5 regenerar os dados, ele passa a
-falhar por estar passando — e o marcador sai.
+O teste de reconciliação esteve marcado `xfail(strict=True)` enquanto o artefato
+publicado era o antigo. **Em 31/07/2026 ele caiu por `XPASS`**: com o ano aberto
+sendo rebaixado a cada carga e o artefato regenerado, o gasto publicado passou a
+bater com a fonte, deputado a deputado, dentro de R$ 1,00. O marcador saiu.
+
+O total ajustado da legislatura foi de R$ 401,5 milhões para R$ 643,7 milhões.
+Os R$ 66 milhões acima da diferença apurada na investigação são 2026, ano que a
+coleta antiga nunca chegou a baixar.
 
 **Nenhuma invariante interna detectou o problema**: as 14 do artefato publicado
 passam. Um resultado calculado sobre fonte obsoleta é perfeitamente consistente

@@ -1,4 +1,28 @@
+import pandas as pd
 import plotly.graph_objects as go
+
+
+def _frase_de_eficacia(linha):
+    """Descreve o destino das proposições, ou diz que não há o que descrever.
+
+    Parlamentar sem nenhuma proposição no universo medido tem taxa nula, não
+    zero — e "0,0% de sucesso" seria afirmar fracasso onde não houve medição.
+    Ver docs/universo_e_pesos.md.
+    """
+    if pd.isna(linha["pct_sucesso"]):
+        return "📌 Sem proposições no universo medido — não há taxa de tramitação."
+    return (
+        f"📌 Suas proposições tiveram <b>{linha['pct_sucesso']:.1%}</b> de sucesso, "
+        f"<b>{linha['pct_fracasso']:.1%}</b> de fracasso e "
+        f"<b>{linha['pct_andamento']:.1%}</b> ainda em tramitação."
+    )
+
+
+def _frase_de_temas(linha):
+    if pd.isna(linha["temas_destaque"]):
+        return "🗣️ Sem temas registrados nas proposições."
+    return f"🗣️ Atuou majoritariamente em temas como <b>{linha['temas_destaque']}</b>."
+
 
 def grafico_quadrantes_interativo(df):
     # Cálculo das medianas
@@ -16,18 +40,19 @@ def grafico_quadrantes_interativo(df):
             mode="markers",
             marker=dict(size=6, opacity=0.95),
             name=partido,
-            customdata=dados_partido[["nome", "sgUF", "sgPartido", "quadrante", "ranking", 
-                                    "temas_destaque", "pct_sucesso", "pct_fracasso", "pct_andamento"]].values,
+            customdata=dados_partido.assign(
+                frase_temas=dados_partido.apply(_frase_de_temas, axis=1),
+                frase_eficacia=dados_partido.apply(_frase_de_eficacia, axis=1),
+            )[["nome", "sgUF", "sgPartido", "quadrante", "ranking",
+               "frase_temas", "frase_eficacia"]].values,
             hovertemplate=(
                 "<b>%{customdata[0]}</b> (%{customdata[1]}-%{customdata[2]})<br>" +
                 "🔹 <b>Quadrante:</b> %{customdata[3]}<br>" +
                 "🥇 <b>Ranking:</b> %{customdata[4]}º<br>" +
                 "📈 <b>Produtividade:</b> %{x:.1f}<br>" +
                 "💰 <b>Gasto ajustado:</b> R$ %{y:,.2f}<br><br>" +
-                "🗣️ Atuou majoritariamente em temas como <b>%{customdata[5]}</b>.<br>" +
-                "📌 Suas proposições tiveram <b>%{customdata[6]:.1%}</b> de sucesso, "
-                "<b>%{customdata[7]:.1%}</b> de fracasso e "
-                "<b>%{customdata[8]:.1%}</b> ainda em tramitação." +
+                "%{customdata[5]}<br>" +
+                "%{customdata[6]}" +
                 "<extra></extra>"
             ),
         )

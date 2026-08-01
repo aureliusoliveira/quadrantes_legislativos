@@ -113,14 +113,35 @@ def test_quadrantes_dividem_a_base_pela_mediana(resultados):
     )
 
 
+COLUNAS_DE_EFICACIA = ["pct_sucesso", "pct_fracasso", "pct_andamento"]
+
+
 def test_percentuais_de_tramitacao_somam_um(resultados):
-    colunas = ["pct_sucesso", "pct_fracasso", "pct_andamento"]
-    if not set(colunas).issubset(resultados.columns):
+    """Para quem tem base. Sem base, os três são nulos — e nulo não é zero.
+
+    O universo passou a ser só o que conta como produção legislativa (ver
+    docs/universo_e_pesos.md), e existe parlamentar sem nenhuma proposição nesse
+    recorte, ou com todas sem situação registrada na fonte. Preencher zero diria
+    "0% de sucesso", que afirma fracasso onde não há o que medir.
+    """
+    if not set(COLUNAS_DE_EFICACIA).issubset(resultados.columns):
         pytest.skip("resultado sem métricas de tramitação")
 
-    soma = resultados[colunas].sum(axis=1)
-    fora = resultados[(soma - 1).abs() > 1e-6]
+    com_base = resultados[resultados[COLUNAS_DE_EFICACIA].notna().any(axis=1)]
+    soma = com_base[COLUNAS_DE_EFICACIA].sum(axis=1)
+    fora = com_base[(soma - 1).abs() > 1e-6]
     assert fora.empty, f"{len(fora)} deputados com percentuais que não somam 1"
+
+
+def test_eficacia_ausente_e_ausente_nas_tres_colunas(resultados):
+    """Meia medida é pior que nenhuma: um parlamentar com sucesso nulo e fracasso
+    preenchido seria lido como quem nunca teve proposição aprovada."""
+    if not set(COLUNAS_DE_EFICACIA).issubset(resultados.columns):
+        pytest.skip("resultado sem métricas de tramitação")
+
+    nulos = resultados[COLUNAS_DE_EFICACIA].isna().sum(axis=1)
+    parciais = resultados[nulos.between(1, 2)]
+    assert parciais.empty, f"{len(parciais)} deputados com eficácia parcialmente nula"
 
 
 def test_percentuais_de_tramitacao_estao_entre_zero_e_um(resultados):

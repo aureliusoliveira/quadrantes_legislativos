@@ -85,17 +85,15 @@ def test_nenhum_deputado_com_gasto_negativo_na_fonte(gasto_por_deputado):
     assert negativos.empty, f"{len(negativos)} deputados com gasto negativo: {negativos.to_dict()}"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "O resultados.csv publicado foi calculado sobre uma cópia obsoleta do CEAP: "
-        "510 de 510 deputados aparecem com gasto MENOR que o da fonte atual, num total "
-        "de R$ 177 milhões (30,6%) a menos. Causa é o checkpoint que impede rebaixar "
-        "ano já coletado (C1). Este xfail cai quando o Incremento 5 regenerar o artefato — "
-        "e quando cair, remova o marcador."
-    ),
-)
 def test_gasto_publicado_bate_com_a_fonte(publicado, gasto_por_deputado):
+    """Esteve `xfail` enquanto o artefato publicado era o antigo.
+
+    A causa era o checkpoint que congelava o ano já coletado: 510 de 510
+    deputados apareciam com gasto menor que o da fonte, R$ 177 milhões (30,6%)
+    a menos no total. Com o rebaixamento do ano aberto e a carga regenerada, o
+    teste passou a passar — e o marcador saiu, como ele mesmo previa.
+    """
+
     comum = publicado.index.intersection(gasto_por_deputado.index)
     assert len(comum) > 0, "nenhum deputado em comum entre publicado e fonte"
 
