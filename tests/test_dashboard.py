@@ -15,7 +15,10 @@ from streamlit.testing.v1 import AppTest
 RAIZ = Path(__file__).resolve().parent.parent
 DASHBOARD = RAIZ / "dashboard"
 
-PAGINAS = sorted(DASHBOARD.glob("pages/*.py")) + [DASHBOARD / "app.py"]
+# O app é de página única: `app.py` é ao mesmo tempo o entrypoint do Streamlit
+# Cloud e a visualização. O glob continua aqui para que qualquer página futura
+# entre no smoke test sem ninguém precisar lembrar de registrá-la.
+PAGINAS = [DASHBOARD / "app.py"] + sorted(DASHBOARD.glob("pages/*.py"))
 
 
 @pytest.fixture(autouse=True)
@@ -39,7 +42,7 @@ def test_ranking_exibido_cobre_todos_os_deputados_do_csv():
     DataFrame do chamador. O cálculo foi trazido para a página; este teste falha
     se a tabela deixar de refletir a mesma base que o gráfico.
     """
-    app = AppTest.from_file(str(DASHBOARD / "pages" / "1_quadrantes.py"), default_timeout=60).run()
+    app = AppTest.from_file(str(DASHBOARD / "app.py"), default_timeout=60).run()
     assert not app.exception
 
     import pandas as pd
