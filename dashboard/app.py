@@ -2,7 +2,7 @@
 import pandas as pd
 import streamlit as st
 from graficos import grafico_quadrantes_interativo
-from settings import INDICADORES_PATH
+from settings import DIAGRAMA_QUADRANTES, INDICADORES_PATH
 
 st.set_page_config(
     page_title="Quadrantes da Produtividade Legislativa",
@@ -31,9 +31,8 @@ with esquerda:
       não vale o mesmo que um requerimento.
     - **Custo:** gasto CEAP, descontadas as passagens aéreas envolvendo Brasília,
       que penalizariam deputados de estados distantes.
-    - **Quadrantes:** as linhas tracejadas são as **medianas** de cada eixo, e
-      dividem os parlamentares em alta ou baixa produtividade, com alto ou baixo
-      custo.
+    - **Quadrantes:** as linhas tracejadas são as **medianas** de cada eixo. O
+      diagrama abaixo explica como ler cada canto.
     """)
 
 with direita:
@@ -86,6 +85,10 @@ df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
 df["ranking"] = (
     df["produtividade_legislativa"].rank(ascending=False, method="min").astype(int)
 )
+
+# Tamanho natural, não "stretch": o diagrama é vetor, e esticá-lo até a largura
+# da página ampliaria a tipografia junto, comendo a tela antes do gráfico.
+st.image(str(DIAGRAMA_QUADRANTES), width="content")
 
 st.plotly_chart(grafico_quadrantes_interativo(df), width="stretch")
 st.caption(

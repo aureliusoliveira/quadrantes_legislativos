@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" width="640" height="420" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="Diagrama explicando como ler os quatro quadrantes: o eixo horizontal é a produtividade legislativa e o vertical é o gasto do mandato, ambos cortados pela mediana da Câmara.">
+  <rect width="640" height="420" fill="#F7F9FB"/>
+
+  <text x="320" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#0F1C28">Como ler os quadrantes</text>
+
+  <!-- Células -->
+  <rect x="95" y="52" width="263" height="123" fill="#EFE7E8"/>
+  <rect x="358" y="52" width="262" height="123" fill="#E4E7F0"/>
+  <rect x="95" y="175" width="263" height="123" fill="#EDEDE6"/>
+  <rect x="358" y="175" width="262" height="123" fill="#DCE9F5"/>
+
+  <text x="226" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#0F1C28">Alto custo, baixa produtividade</text>
+  <text x="226" y="127" text-anchor="middle" font-size="11" fill="#3C4956">Gasta acima da mediana, produz abaixo.</text>
+
+  <text x="489" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#0F1C28">Alto custo, alta produtividade</text>
+  <text x="489" y="127" text-anchor="middle" font-size="11" fill="#3C4956">Gasta acima da mediana, produz acima.</text>
+
+  <text x="226" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="#0F1C28">Baixo custo, baixa produtividade</text>
+  <text x="226" y="250" text-anchor="middle" font-size="11" fill="#3C4956">Gasta abaixo da mediana, produz abaixo.</text>
+
+  <text x="489" y="229" text-anchor="middle" font-size="13" font-weight="600" fill="#0F1C28">Baixo custo, alta produtividade</text>
+  <text x="489" y="250" text-anchor="middle" font-size="11" fill="#3C4956">Gasta abaixo da mediana, produz acima.</text>
+
+  <!-- Medianas -->
+  <line x1="358" y1="52" x2="358" y2="298" stroke="#B03A3A" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <line x1="95" y1="175" x2="620" y2="175" stroke="#2E7D5B" stroke-width="1.6" stroke-dasharray="6 4"/>
+
+  <rect x="320" y="38" width="76" height="15" rx="2" fill="#F7F9FB"/>
+  <text x="358" y="49" text-anchor="middle" font-size="10" font-weight="600" fill="#B03A3A">mediana</text>
+  <rect x="562" y="167" width="52" height="15" rx="2" fill="#DCE9F5"/>
+  <text x="612" y="179" text-anchor="end" font-size="10" font-weight="600" fill="#2E7D5B">mediana</text>
+
+  <rect x="95" y="52" width="525" height="246" fill="none" stroke="#C4CDD6" stroke-width="1"/>
+
+  <!-- Eixo vertical -->
+  <line x1="72" y1="298" x2="72" y2="59" stroke="#53616E" stroke-width="1.3"/>
+  <path d="M 72 52 l -4 9 h 8 z" fill="#53616E"/>
+  <text x="42" y="175" text-anchor="middle" font-size="12" font-weight="600" fill="#0F1C28" transform="rotate(-90 42 175)">Gasto do mandato</text>
+  <text x="57" y="175" text-anchor="middle" font-size="9.5" fill="#53616E" transform="rotate(-90 57 175)">CEAP, sem passagens de Brasília</text>
+  <text x="82" y="68" font-size="9.5" fill="#53616E">mais</text>
+  <text x="82" y="294" font-size="9.5" fill="#53616E">menos</text>
+
+  <!-- Eixo horizontal -->
+  <line x1="95" y1="320" x2="613" y2="320" stroke="#53616E" stroke-width="1.3"/>
+  <path d="M 620 320 l -9 -4 v 8 z" fill="#53616E"/>
+  <text x="358" y="344" text-anchor="middle" font-size="12" font-weight="600" fill="#0F1C28">Produtividade legislativa</text>
+  <text x="358" y="359" text-anchor="middle" font-size="9.5" fill="#53616E">proposições de autoria, com pesos por tipo</text>
+  <text x="95" y="314" font-size="9.5" fill="#53616E">menos</text>
+  <text x="620" y="314" text-anchor="end" font-size="9.5" fill="#53616E">mais</text>
+
+  <!-- Ressalvas -->
+  <line x1="95" y1="378" x2="620" y2="378" stroke="#C4CDD6" stroke-width="1"/>
+  <text x="95" y="395" font-size="10" fill="#3C4956">O corte é a mediana, não uma meta: metade dos deputados cai de cada lado de cada linha, por construção.</text>
+  <text x="95" y="410" font-size="10" fill="#3C4956">Posição não é juízo. Os pesos foram escolhidos pelo autor, e o eixo não mede qualidade legislativa.</text>
+</svg>

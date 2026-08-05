@@ -11,6 +11,10 @@ Pipeline de dados que cruza **custo de mandato** (CEAP) e **produtividade legisl
 
 **O ciclo completo:** coleta na API da Câmara e nos arquivos de despesa → padronização e reconciliação das bases → cálculo dos indicadores → publicação do artefato servido ao dashboard. Cada etapa tem teste, e nenhum teste depende de rede.
 
+## Como ler os quadrantes
+
+![Diagrama dos quatro quadrantes: o eixo horizontal é a produtividade legislativa e o vertical é o gasto do mandato, cada um cortado pela mediana da Câmara](docs/como_ler_os_quadrantes.svg)
+
 O escopo, os não-objetivos e as fases estão no [PRD](docs/quadrantes_prd_v1.md).
 
 > **Estado atual: Fase 1 (Fundação), em andamento.** Há divergências conhecidas entre a metodologia documentada e a implementada, e valores de gasto CEAP sob investigação. Veja [Limitações conhecidas](#limitações-conhecidas) antes de citar qualquer número.
