@@ -1,6 +1,9 @@
 # Quadrantes da Produtividade Legislativa
 
 [![CI](https://github.com/aureliusoliveira/quadrantes_legislativos/actions/workflows/ci.yml/badge.svg)](https://github.com/aureliusoliveira/quadrantes_legislativos/actions/workflows/ci.yml)
+[![Dashboard](https://img.shields.io/badge/dashboard-online-005EB8)](https://quadranteslegislativos.streamlit.app/)
+
+**▶ [Ver o dashboard](https://quadranteslegislativos.streamlit.app/)**
 
 Pipeline de dados que cruza **custo de mandato** (CEAP) e **produtividade legislativa** de deputados federais brasileiros, a partir dos dados abertos da Câmara, e publica o resultado num dashboard interativo. Os parlamentares da 57ª legislatura são posicionados em quatro quadrantes, com metodologia aberta e auditável.
 
