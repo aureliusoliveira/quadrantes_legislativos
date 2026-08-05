@@ -1,9 +1,12 @@
 # Quadrantes da Produtividade Legislativa
 
-Plataforma pública e contínua que cruza **custo de mandato** (CEAP) e **produtividade legislativa** de deputados federais brasileiros, a partir dos dados abertos da Câmara. Classifica os parlamentares em quatro quadrantes e publica um ranking com metodologia aberta e auditável.
+[![CI](https://github.com/aureliusoliveira/quadrantes_legislativos/actions/workflows/ci.yml/badge.svg)](https://github.com/aureliusoliveira/quadrantes_legislativos/actions/workflows/ci.yml)
 
-**Usuário primário:** jornalista de dados.
-**Cadência:** mensal. **Escopo:** plataforma contínua, com legislatura como dimensão.
+Pipeline de dados que cruza **custo de mandato** (CEAP) e **produtividade legislativa** de deputados federais brasileiros, a partir dos dados abertos da Câmara, e publica o resultado num dashboard interativo. Os parlamentares da 57ª legislatura são posicionados em quatro quadrantes, com metodologia aberta e auditável.
+
+**Stack:** Python 3.12 · pandas · Plotly · Streamlit · pytest · uv · GitHub Actions.
+
+**O ciclo completo:** coleta na API da Câmara e nos arquivos de despesa → padronização e reconciliação das bases → cálculo dos indicadores → publicação do artefato servido ao dashboard. Cada etapa tem teste, e nenhum teste depende de rede.
 
 O escopo, os não-objetivos e as fases estão no [PRD](docs/quadrantes_prd_v1.md).
 
@@ -17,7 +20,9 @@ O escopo, os não-objetivos e as fases estão no [PRD](docs/quadrantes_prd_v1.md
 │   ├── processamento/    # carregamento e padronização das bases
 │   ├── indicadores/      # regra de negócio: produtividade, gastos, tramitação, temas
 │   └── config.py
-├── dashboard/            # app Streamlit (entrypoint do Streamlit Cloud)
+├── dashboard/            # app Streamlit de página única
+│   ├── app.py            # entrypoint do Streamlit Cloud e a própria visualização
+│   ├── graficos.py       # gráfico de quadrantes (Plotly)
 │   └── data/             # resultados.csv servido ao dashboard
 ├── tests/
 ├── docs/
@@ -63,9 +68,11 @@ O CI roda a suíte a cada push.
 
 Além das limitações metodológicas declaradas no PRD (o projeto não mede ética, conduta nem qualidade legislativa), há problemas em aberto sendo tratados na Fase 1:
 
-- O ranking exibido no dashboard é de produtividade pura, enquanto o texto da página descreve uma composição de dois critérios.
 - Alguns deputados aparecem com gasto CEAP implausivelmente baixo, o que empurra dado ausente para o topo do ranking.
 - As métricas de eficácia de tramitação refletem a data da primeira coleta, não o estado atual.
+- O pipeline calcula um ranking composto (produtividade + gasto), mas o dashboard publica produtividade pura — compor os dois eixos numa nota única exigiria arbitrar quanto um real vale em proposição, e a decisão está adiada para a Fase 2. O dashboard declara qual dos dois está exibindo.
+
+Elas estão declaradas também na própria interface: quem abre o dashboard lê as ressalvas antes de ler o ranking.
 
 ## Licença
 
