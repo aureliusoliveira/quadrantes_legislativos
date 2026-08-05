@@ -67,15 +67,26 @@ make test
 
 O CI roda a suíte a cada push.
 
+## O viés deste projeto
+
+Não existe métrica neutra de trabalho legislativo. Escolher o que conta como produção é uma decisão de valor, e ela foi tomada por uma pessoa: os pesos por tipo de proposição em [`legisdata/static/mapa_pesos_proposicoes.csv`](legisdata/static/mapa_pesos_proposicoes.csv) não vêm de tabela oficial nem de consenso acadêmico. São juízo do autor.
+
+O viés declarado é a **democracia e a transparência**: o gasto público deve ser rastreável, a metodologia deve ser auditável até o dado bruto, e quem discordar dos pesos precisa conseguir abrir o arquivo, trocá-los e refazer a conta.
+
+Apresentar um índice como objetivo seria esconder as decisões tomadas para construí-lo. Por isso o projeto não entrega veredito sobre parlamentar nenhum: entrega um instrumento e a lista do que ele não consegue ver.
+
 ## Limitações conhecidas
 
-Além das limitações metodológicas declaradas no PRD (o projeto não mede ética, conduta nem qualidade legislativa), há problemas em aberto sendo tratados na Fase 1:
+Além das limitações metodológicas declaradas no PRD (o projeto não mede ética, conduta nem qualidade legislativa), estas são as que afetam qualquer número exibido hoje:
 
-- Alguns deputados aparecem com gasto CEAP implausivelmente baixo, o que empurra dado ausente para o topo do ranking.
-- As métricas de eficácia de tramitação refletem a data da primeira coleta, não o estado atual.
-- O pipeline calcula um ranking composto (produtividade + gasto), mas o dashboard publica produtividade pura — compor os dois eixos numa nota única exigiria arbitrar quanto um real vale em proposição, e a decisão está adiada para a Fase 2. O dashboard declara qual dos dois está exibindo.
+- **Quem entra no ranking é decidido pelo estado de hoje, não pelo período medido.** A padronização filtra por `situacao == "Exercício"` sobre o `ultimoStatus` da API. Dos 647 parlamentares que exerceram mandato na 57ª legislatura, 508 estão no artefato publicado: os outros 139 produziram durante o período e não aparecem, porque hoje não ocupam a cadeira.
+- **Mandato parcial é comparado com mandato inteiro.** Não há normalização por tempo de exercício. Quem assumiu como suplente, saiu para cargo no Executivo ou voltou à cadeira no meio da legislatura é medido contra quem serviu os quatro anos, tanto em produtividade quanto em gasto.
+- **As métricas de eficácia de tramitação refletem a data da coleta, não o estado atual.** É o mesmo defeito de reprocessamento que congelava o gasto CEAP, descrito em [qualidade dos dados](docs/qualidade_dados.md); o gasto foi corrigido, a tramitação não.
+- **O pipeline calcula um ranking composto (produtividade + gasto), mas o dashboard publica produtividade pura.** Compor os dois eixos numa nota única exigiria arbitrar quanto um real vale em proposição, e a decisão está adiada para a Fase 2. O dashboard declara qual dos dois está exibindo.
 
 Elas estão declaradas também na própria interface: quem abre o dashboard lê as ressalvas antes de ler o ranking.
+
+Uma limitação que **saiu** desta lista: gasto CEAP implausivelmente baixo. Foi investigado, e o caso extremo (R$ 22,04 no ajustado) é real — o parlamentar só usa a cota para passagem aérea, que o ajuste remove. A causa de fundo, um artefato calculado sobre fonte obsoleta, foi corrigida e hoje o gasto publicado bate com a fonte deputado a deputado. O registro está em [qualidade dos dados](docs/qualidade_dados.md).
 
 ## Licença
 

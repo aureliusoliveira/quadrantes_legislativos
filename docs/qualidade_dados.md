@@ -70,6 +70,29 @@ despesa na legislatura, 98 têm menos de 12 meses de gasto — suplentes,
 substituições e quem saiu para assumir cargo no Executivo. O gasto absoluto de
 quem serviu 8 meses é comparado com o de quem serviu 35, sem normalização.
 
+**O filtro de população usa o presente para medir o passado.** A padronização
+mantém apenas `situacao == "Exercício"`, lido do `ultimoStatus` da API — ou seja,
+o estado do parlamentar **hoje**, aplicado como critério de entrada num ranking
+que mede a legislatura inteira. Em 05/08/2026 a API lista 647 parlamentares com
+mandato exercido na 57ª; o artefato publicado tem 508. Os 139 restantes
+produziram durante o período e não aparecem, porque deixaram a cadeira antes da
+coleta.
+
+O efeito tem as duas direções. Quem saiu perto do fim some do ranking com a
+produção inteira. E quem passou a legislatura fora, voltando à cadeira a tempo
+de constar como "Exercício", entra com a produção do tempo em que esteve
+ausente. Marina Silva e Sônia Guajajara são o caso visível: ambas exerceram
+ministério durante a legislatura e voltaram em março e abril de 2026 (prazo de
+desincompatibilização eleitoral). A API as reporta corretamente como
+`Exercício`/`Titular`; o pipeline as inclui corretamente. Elas aparecem em 163º e
+160º, com produtividade 3,3 e 7,5, medidas contra colegas que serviram os quatro
+anos.
+
+Nada aqui é dado errado. A API está certa, o filtro faz o que promete e o teste
+em `tests/test_coleta.py` fixa o comportamento. O que falta é normalização por
+tempo de exercício, sem a qual o indicador confunde "produziu pouco" com "esteve
+pouco".
+
 **`on_bad_lines="skip"` nos carregadores.** Não descartava nenhuma linha nos
 arquivos atuais, mas descartaria em silêncio se a fonte publicasse arquivo
 malformado. Substituído por leitura estrita que interrompe a carga apontando o

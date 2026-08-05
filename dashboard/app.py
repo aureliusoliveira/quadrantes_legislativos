@@ -44,17 +44,36 @@ with direita:
     - **Ética ou conduta.** Gasto dentro da cota é gasto legal.
     - **Trabalho invisível.** Relatoria, articulação, comissão e emenda não
       entram na contagem.
+    - **Tempo de mandato.** Não há normalização: quem serviu oito meses é
+      comparado com quem serviu quatro anos.
     """)
 
 st.warning(
-    "**Projeto em construção — os números estão em validação.** Alguns deputados "
-    "aparecem com gasto CEAP implausivelmente baixo, o que sugere dado ausente "
-    "sendo lido como gasto zero — e dado ausente vira posição de destaque no "
-    "gráfico. As taxas de tramitação refletem a data da coleta, não o estado "
-    "atual das proposições. As limitações conhecidas estão listadas abertamente "
-    "no repositório; não cite estes números como definitivos.",
+    "**Projeto em construção. Os números estão em validação.** Quem entra neste "
+    "ranking é decidido pelo estado de hoje: dos 647 parlamentares que exerceram "
+    "mandato na 57ª legislatura, 508 aparecem aqui, porque a base filtra por "
+    "quem ocupa a cadeira no momento da coleta. Mandato parcial é comparado com "
+    "mandato inteiro, sem normalização por tempo. As taxas de tramitação "
+    "refletem a data da coleta, não o estado atual das proposições. As "
+    "limitações estão listadas abertamente no repositório; não cite estes "
+    "números como definitivos.",
     icon="🚧",
 )
+
+with st.expander("⚖️ Este projeto tem viés. Qual é."):
+    st.markdown("""
+Não existe métrica neutra de trabalho legislativo. Escolher o que conta como
+produção é decisão de valor, e ela foi tomada por uma pessoa: os pesos por tipo
+de proposição não vêm de tabela oficial nem de consenso acadêmico. São juízo do
+autor, e estão num arquivo aberto que qualquer pessoa pode contestar e refazer.
+
+O viés declarado é a **democracia e a transparência**: gasto público deve ser
+rastreável e metodologia deve ser auditável até o dado bruto.
+
+Apresentar um índice como objetivo seria esconder as decisões tomadas para
+construí-lo. Este painel não entrega veredito sobre parlamentar nenhum. Entrega
+um instrumento, e a lista honesta do que ele não consegue ver.
+""")
 
 df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
 
