@@ -182,9 +182,22 @@ def test_colunas_publicadas_estao_presentes(caminho_pesos):
 
     for coluna in ["produtividade_legislativa", "gasto_ceap_ajustado", "quadrante", "ranking"]:
         assert coluna in r.columns
-    # colunas intermediárias não vazam para o resultado
+
+
+def test_parcelas_do_ranking_composto_sao_publicadas(caminho_pesos):
+    """As posições por eixo saem no artefato, e não só a posição final.
+
+    Este teste já afirmou o contrário: as parcelas eram descartadas por serem
+    "intermediárias". Publicar só o resultado obriga quem lê a acreditar nele,
+    o que é exatamente o que este projeto não quer pedir. Com as três colunas
+    na mesma linha, a soma é conferível sem sair do CSV.
+    """
+    r = calcular({"10": 2, "20": 1}, {"10": 1000.0, "20": 2000.0}, caminho_pesos)
+
     for coluna in ["ranking_leg", "ranking_gastos", "ranking_soma"]:
-        assert coluna not in r.columns
+        assert coluna in r.columns
+
+    assert (r["ranking_soma"] == r["ranking_leg"] + r["ranking_gastos"]).all()
 
 
 def test_tipo_de_peso_zero_nao_entra_em_nenhuma_dimensao(caminho_pesos):

@@ -71,13 +71,23 @@ class IndicadoresGerais:
 
         resultado["quadrante"] = resultado.apply(classificar_quadrante, axis=1)
 
+        # Ranking composto por soma de posições (Borda). Cada eixo é ordenado
+        # separadamente e o que se soma são posições, não valores — por isso o
+        # método não precisa arbitrar quanto um real vale em proposição, que é
+        # a conversão sem resposta. Em troca assume que os dois eixos pesam
+        # igual e descarta a magnitude: a distância entre o 1º e o 2º de um
+        # eixo pode ser enorme ou irrisória, e a soma trata as duas do mesmo
+        # jeito. Ver docs/universo_e_pesos.md.
         resultado["ranking_leg"] = resultado["produtividade_legislativa"].rank(ascending=False, method="dense").astype(int)
         resultado["ranking_gastos"] = resultado["gasto_ceap_ajustado"].rank(ascending=True, method="dense").astype(int)
         resultado["ranking_soma"] = resultado["ranking_leg"] + resultado["ranking_gastos"]
         resultado["ranking"] = resultado["ranking_soma"].rank(ascending=True, method="dense").astype(int)
         resultado = resultado.sort_values("ranking", ascending=True).reset_index(drop=True)
-        resultado.drop(columns=["ranking_leg", "ranking_gastos", "ranking_soma"], inplace=True)
         resultado["ranking"] = resultado["ranking"].astype(int)
-        
+
+        # As parcelas ficam no artefato de propósito. Publicar só a posição
+        # final obrigaria a acreditar nela: com `ranking_leg` e
+        # `ranking_gastos` na mesma linha, qualquer pessoa refaz a soma e
+        # confere onde o parlamentar ganhou ou perdeu posição.
 
         return resultado

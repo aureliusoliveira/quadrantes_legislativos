@@ -74,17 +74,10 @@ construí-lo. Este painel não entrega veredito sobre parlamentar nenhum. Entreg
 um instrumento, e a lista honesta do que ele não consegue ver.
 """)
 
+# A coluna `ranking` vem pronta do pipeline e é a composta. A página já a
+# recalculou aqui como produtividade pura, o que descartava metade do método
+# sem dizer a ninguém; a regra de negócio mora em legisdata, não nesta camada.
 df = pd.read_csv(INDICADORES_PATH, sep=";", encoding="utf-8")
-
-# A coluna `ranking` do CSV é o ranking composto (produtividade + gasto) que o
-# pipeline calcula. A página publica produtividade pura, então recalcula aqui em
-# vez de usar a coluna — compor os dois eixos numa nota única exigiria arbitrar
-# quanto um real vale em proposição, e essa decisão ainda não foi tomada.
-# Até a consolidação dos repositórios isso acontecia dentro de
-# grafico_quadrantes_interativo(), que mutava o DataFrame do chamador in-place.
-df["ranking"] = (
-    df["produtividade_legislativa"].rank(ascending=False, method="min").astype(int)
-)
 
 # Tamanho natural, não "stretch": o diagrama é vetor, e esticá-lo até a largura
 # da página ampliaria a tipografia junto, comendo a tela antes do gráfico.
@@ -97,7 +90,15 @@ st.caption(
 )
 
 st.markdown("### 🏆 Ranking Parlamentar")
-st.caption("Ordenado **apenas por produtividade legislativa** — o gasto é o segundo eixo do gráfico, não entra na posição.")
+st.caption(
+    "As **duas dimensões** entram na posição. Cada eixo é ordenado por conta "
+    "própria (mais produtivo primeiro, menor gasto primeiro), e o que se soma "
+    "são as duas posições: quanto menor a soma, melhor o lugar. Somar posições "
+    "e não valores evita ter que arbitrar quanto um real vale em proposição, "
+    "mas assume que os dois eixos pesam igual e descarta a magnitude da "
+    "diferença. As colunas de posição por eixo estão na tabela para você "
+    "refazer a conta."
+)
 
 ranking_df = (
     df.sort_values("ranking")
@@ -107,6 +108,8 @@ ranking_df = (
             "nome",
             "sgPartido",
             "sgUF",
+            "ranking_leg",
+            "ranking_gastos",
             "produtividade_legislativa",
             "gasto_ceap_ajustado",
         ]
@@ -115,6 +118,8 @@ ranking_df = (
         columns={
             "ranking": "Ranking",
             "nome": "Deputado",
+            "ranking_leg": "Pos. produtividade",
+            "ranking_gastos": "Pos. gasto",
             "sgPartido": "Partido",
             "sgUF": "UF",
             "produtividade_legislativa": "Produtividade",
