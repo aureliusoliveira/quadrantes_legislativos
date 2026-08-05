@@ -8,15 +8,14 @@ requires-python = ">=3.12"
 # MIT, mas não há LICENSE no repositório — decisão pendente, não presumida aqui.
 
 # Dependências de execução. Tudo que `legisdata` e o dashboard importam precisa
-# estar aqui: até este commit, `requests` só funcionava por ser dependência
-# transitiva do streamlit, e `python-dotenv`/`wget` não constavam em lugar nenhum.
+# estar aqui — `requests` só funcionava por ser dependência transitiva do
+# streamlit — e nada além disso: cada linha aqui vira uma instalação no build do
+# Streamlit Cloud, e uma que falhe derruba o deploy inteiro.
 dependencies = [
     "pandas>=2.2",
     "plotly>=5.24",
-    "python-dotenv>=1.0",
     "requests>=2.32",
     "streamlit>=1.40",
-    "wget>=3.2",
 ]
 
 [dependency-groups]
